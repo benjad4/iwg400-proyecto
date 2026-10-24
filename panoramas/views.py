@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from .models import Panorama
 
 
@@ -28,3 +28,8 @@ def lista_panoramas(request):
         'costo_max': costo_max,
         'junaeb': junaeb,
     })
+
+
+def detalle_panorama(request, pk):
+    panorama = get_object_or_404(Panorama, pk=pk)
+    return render(request, 'panoramas/detalle.html', {'panorama': panorama})

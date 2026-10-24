@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ panorama.nombre }}</title>
+</head>
+<body>
+    <a href="{% url 'lista_panoramas' %}">← Volver a la lista</a>
+
+    <h1>{{ panorama.nombre }}</h1>
+    <p>{{ panorama.descripcion }}</p>
+
+    <ul>
+        <li>Categoría: {{ panorama.categoria }}</li>
+        <li>Dirección: {{ panorama.direccion }}, {{ panorama.comuna }}</li>
+        <li>Costo: {% if panorama.costo == 0 %}Gratis{% else %}${{ panorama.costo }}{% endif %}</li>
+        <li>Horario: {% if panorama.horario %}{{ panorama.horario }}{% else %}No informado{% endif %}</li>
+        {% if panorama.acepta_junaeb %}
+            <li>Acepta JUNAEB · Cocina: {{ panorama.tipo_cocina }}</li>
+        {% endif %}
+    </ul>
+</body>
+</html>
