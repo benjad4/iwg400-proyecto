@@ -19,6 +19,24 @@
             </select>
         </label>
 
+        <label>Categoría:
+            <select name="categoria">
+                <option value="">Todas</option>
+                {% for c in categorias %}
+                    <option value="{{ c }}" {% if c == categoria_elegida %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>Tipo de cocina:
+            <select name="cocina">
+                <option value="">Todas</option>
+                {% for c in cocinas %}
+                    <option value="{{ c }}" {% if c == cocina_elegida %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
         <label>Presupuesto máximo ($):
             <input type="number" name="costo_max" min="0" value="{{ costo_max }}">
         </label>
