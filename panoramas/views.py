@@ -1,4 +1,6 @@
-from django.shortcuts import get_object_or_404, render
+from django.db.models import Avg
+from django.shortcuts import get_object_or_404, redirect, render
+from .forms import ResenaForm
 from .models import Panorama
 
 
@@ -32,4 +34,23 @@ def lista_panoramas(request):
 
 def detalle_panorama(request, pk):
     panorama = get_object_or_404(Panorama, pk=pk)
-    return render(request, 'panoramas/detalle.html', {'panorama': panorama})
+
+    if request.method == 'POST':
+        form = ResenaForm(request.POST)
+        if form.is_valid():
+            resena = form.save(commit=False)
+            resena.panorama = panorama
+            resena.save()
+            return redirect('detalle_panorama', pk=pk)
+    else:
+        form = ResenaForm()
+
+    resenas = panorama.resenas.all()
+    promedio = resenas.aggregate(Avg('valoracion'))['valoracion__avg']
+
+    return render(request, 'panoramas/detalle.html', {
+        'panorama': panorama,
+        'resenas': resenas,
+        'promedio': promedio,
+        'form': form,
+    })

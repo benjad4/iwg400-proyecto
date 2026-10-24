@@ -19,5 +19,26 @@
             <li>Acepta JUNAEB · Cocina: {{ panorama.tipo_cocina }}</li>
         {% endif %}
     </ul>
+
+    <h2>Reseñas</h2>
+    {% if promedio %}
+        <p>Valoración promedio: {{ promedio|floatformat:1 }} / 5 ({{ resenas.count }} reseñas)</p>
+    {% endif %}
+
+    {% for r in resenas %}
+        <div>
+            <strong>{{ r.autor }}</strong> · {{ r.valoracion }}/5 · {{ r.fecha|date:"d/m/Y" }}
+            <p>{{ r.comentario }}</p>
+        </div>
+    {% empty %}
+        <p>Aún no hay reseñas. ¡Sé el primero!</p>
+    {% endfor %}
+
+    <h3>Deja tu reseña</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Publicar</button>
+    </form>
 </body>
 </html>

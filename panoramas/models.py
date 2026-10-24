@@ -16,3 +16,20 @@ class Panorama(models.Model):
 
     def __str__(self):
         return self.nombre
+#La línea ForeignKey conecta cada reseña con un panorama, y ordering deja las más recientes primero.
+class Resena(models.Model):
+    panorama = models.ForeignKey(
+        Panorama, on_delete=models.CASCADE, related_name='resenas'
+    )
+    autor = models.CharField(max_length=60)
+    valoracion = models.PositiveSmallIntegerField(
+        choices=[(i, str(i)) for i in range(1, 6)]
+    )
+    comentario = models.TextField(blank=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha']
+
+    def __str__(self):
+        return f'{self.autor} - {self.panorama.nombre}'
