@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Panoramas en Santiago</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
     <h1>Panoramas en Santiago</h1>
+
+    <div id="mapa" style="height: 400px; width: 100%;"></div>
 
     {% for p in panoramas %}
         <div>
@@ -16,5 +20,19 @@
     {% empty %}
         <p>Aún no hay panoramas.</p>
     {% endfor %}
+
+    {{ datos_mapa|json_script:"datos-mapa" }}
+    <script>
+        const mapa = L.map('mapa').setView([-33.45, -70.66], 12);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; Colaboradores de OpenStreetMap'
+        }).addTo(mapa);
+
+        const datos = JSON.parse(document.getElementById('datos-mapa').textContent);
+        datos.forEach(function (p) {
+            L.marker([p.latitud, p.longitud]).addTo(mapa).bindPopup(p.nombre);
+        });
+    </script>
 </body>
 </html>

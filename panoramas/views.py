@@ -4,4 +4,8 @@ from .models import Panorama
 
 def lista_panoramas(request):
     panoramas = Panorama.objects.all()
-    return render(request, 'panoramas/lista.html', {'panoramas': panoramas})
+    datos_mapa = list(panoramas.values('nombre', 'latitud', 'longitud'))
+    return render(request, 'panoramas/lista.html', {
+        'panoramas': panoramas,
+        'datos_mapa': datos_mapa,
+    })
