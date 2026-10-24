@@ -1,5 +1,6 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 from .forms import ResenaForm
 from .models import Panorama
 
@@ -68,4 +69,30 @@ def detalle_panorama(request, pk):
         'resenas': resenas,
         'promedio': promedio,
         'form': form,
+        'esta_guardado': pk in request.session.get('guardados', []),
     })
+
+
+@require_POST
+def guardar_panorama(request, pk):
+    get_object_or_404(Panorama, pk=pk)
+    guardados = request.session.get('guardados', [])
+    if pk not in guardados:
+        guardados.append(pk)
+    request.session['guardados'] = guardados
+    return redirect('detalle_panorama', pk=pk)
+
+
+@require_POST
+def quitar_panorama(request, pk):
+    guardados = request.session.get('guardados', [])
+    if pk in guardados:
+        guardados.remove(pk)
+    request.session['guardados'] = guardados
+    return redirect('mis_guardados')
+
+
+def mis_guardados(request):
+    ids = request.session.get('guardados', [])
+    panoramas = Panorama.objects.filter(pk__in=ids)
+    return render(request, 'panoramas/guardados.html', {'panoramas': panoramas})
