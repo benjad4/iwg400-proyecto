@@ -9,6 +9,29 @@
 <body>
     <h1>Panoramas en Santiago</h1>
 
+    <form method="get">
+        <label>Comuna:
+            <select name="comuna">
+                <option value="">Todas</option>
+                {% for c in comunas %}
+                    <option value="{{ c }}" {% if c == comuna_elegida %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>Presupuesto máximo ($):
+            <input type="number" name="costo_max" min="0" value="{{ costo_max }}">
+        </label>
+
+        <label>
+            <input type="checkbox" name="junaeb" value="1" {% if junaeb %}checked{% endif %}>
+            Acepta JUNAEB
+        </label>
+
+        <button type="submit">Filtrar</button>
+        <a href="/">Limpiar</a>
+    </form>
+
     <div id="mapa" style="height: 400px; width: 100%;"></div>
 
     {% for p in panoramas %}
@@ -16,9 +39,12 @@
             <h2>{{ p.nombre }}</h2>
             <p>{{ p.comuna }} · {{ p.categoria }}</p>
             <p>{% if p.costo == 0 %}Gratis{% else %}${{ p.costo }}{% endif %}</p>
+            {% if p.acepta_junaeb %}
+                <p>Acepta JUNAEB · Cocina: {{ p.tipo_cocina }}</p>
+            {% endif %}
         </div>
     {% empty %}
-        <p>Aún no hay panoramas.</p>
+        <p>No hay panoramas con esos filtros.</p>
     {% endfor %}
 
     {{ datos_mapa|json_script:"datos-mapa" }}
