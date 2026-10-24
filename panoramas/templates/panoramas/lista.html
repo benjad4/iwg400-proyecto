@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panoramas en Santiago</title>
+</head>
+<body>
+    <h1>Panoramas en Santiago</h1>
+
+    {% for p in panoramas %}
+        <div>
+            <h2>{{ p.nombre }}</h2>
+            <p>{{ p.comuna }} · {{ p.categoria }}</p>
+            <p>{% if p.costo == 0 %}Gratis{% else %}${{ p.costo }}{% endif %}</p>
+        </div>
+    {% empty %}
+        <p>Aún no hay panoramas.</p>
+    {% endfor %}
+</body>
+</html>
