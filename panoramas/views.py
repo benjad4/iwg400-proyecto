@@ -1,8 +1,14 @@
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from .forms import ResenaForm
 from .models import Panorama
+
+METODOS_PAGO = {
+    'efectivo': 'acepta_efectivo',
+    'tarjeta': 'acepta_tarjeta',
+    'transferencia': 'acepta_transferencia',
+}
 
 
 def lista_panoramas(request):
@@ -13,6 +19,11 @@ def lista_panoramas(request):
     cocina = request.GET.get('cocina', '')
     costo_max = request.GET.get('costo_max', '')
     junaeb = request.GET.get('junaeb', '')
+    personas = request.GET.get('personas', '')
+    pago = request.GET.get('pago', '')
+    accesible = request.GET.get('accesible', '')
+    mascotas = request.GET.get('mascotas', '')
+    ninos = request.GET.get('ninos', '')
 
     if comuna:
         panoramas = panoramas.filter(comuna=comuna)
@@ -24,6 +35,18 @@ def lista_panoramas(request):
         panoramas = panoramas.filter(costo__lte=int(costo_max))
     if junaeb:
         panoramas = panoramas.filter(acepta_junaeb=True)
+    if personas.isdigit():
+        panoramas = panoramas.filter(
+            Q(capacidad_maxima__isnull=True) | Q(capacidad_maxima__gte=int(personas))
+        )
+    if pago in METODOS_PAGO:
+        panoramas = panoramas.filter(**{METODOS_PAGO[pago]: True})
+    if accesible:
+        panoramas = panoramas.filter(accesible=True)
+    if mascotas:
+        panoramas = panoramas.filter(acepta_mascotas=True)
+    if ninos:
+        panoramas = panoramas.filter(apto_ninos=True)
 
     comunas = (Panorama.objects.order_by('comuna')
                .values_list('comuna', flat=True).distinct())
@@ -45,6 +68,11 @@ def lista_panoramas(request):
         'cocina_elegida': cocina,
         'costo_max': costo_max,
         'junaeb': junaeb,
+        'personas': personas,
+        'pago_elegido': pago,
+        'accesible': accesible,
+        'mascotas': mascotas,
+        'ninos': ninos,
     })
 
 

@@ -23,6 +23,10 @@
         <li>Dirección: {{ panorama.direccion }}, {{ panorama.comuna }}</li>
         <li>Costo: {% if panorama.costo == 0 %}Gratis{% else %}${{ panorama.costo }}{% endif %}</li>
         <li>Horario: {% if panorama.horario %}{{ panorama.horario }}{% else %}No informado{% endif %}</li>
+                <li>Capacidad: {% if panorama.capacidad_maxima %}hasta {{ panorama.capacidad_maxima }} personas{% else %}sin límite informado{% endif %}</li>
+        <li>Pago: {% if panorama.acepta_efectivo %}Efectivo {% endif %}{% if panorama.acepta_tarjeta %}Tarjeta {% endif %}{% if panorama.acepta_transferencia %}Transferencia{% endif %}</li>
+        <li>Accesible: {% if panorama.accesible %}Sí{% else %}No{% endif %} · Mascotas: {% if panorama.acepta_mascotas %}Sí{% else %}No{% endif %} · Niños: {% if panorama.apto_ninos %}Sí{% else %}No{% endif %}</li>
+        
         {% if panorama.acepta_junaeb %}
             <li>Acepta JUNAEB · Cocina: {{ panorama.tipo_cocina }}</li>
         {% endif %}

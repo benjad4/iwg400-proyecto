@@ -8,44 +8,75 @@
 </head>
 <body>
     <h1>Panoramas en Santiago</h1>
-        <p><a href="{% url 'mis_guardados' %}">Mis guardados</a></p>
+    <p><a href="{% url 'mis_guardados' %}">Mis guardados</a></p>
 
     <form method="get">
-        <label>Comuna:
-            <select name="comuna">
-                <option value="">Todas</option>
-                {% for c in comunas %}
-                    <option value="{{ c }}" {% if c == comuna_elegida %}selected{% endif %}>{{ c }}</option>
-                {% endfor %}
-            </select>
-        </label>
+        <div>
+            <label>Comuna:
+                <select name="comuna">
+                    <option value="">Todas</option>
+                    {% for c in comunas %}
+                        <option value="{{ c }}" {% if c == comuna_elegida %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </label>
 
-        <label>Categoría:
-            <select name="categoria">
-                <option value="">Todas</option>
-                {% for c in categorias %}
-                    <option value="{{ c }}" {% if c == categoria_elegida %}selected{% endif %}>{{ c }}</option>
-                {% endfor %}
-            </select>
-        </label>
+            <label>Categoría:
+                <select name="categoria">
+                    <option value="">Todas</option>
+                    {% for c in categorias %}
+                        <option value="{{ c }}" {% if c == categoria_elegida %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </label>
 
-        <label>Tipo de cocina:
-            <select name="cocina">
-                <option value="">Todas</option>
-                {% for c in cocinas %}
-                    <option value="{{ c }}" {% if c == cocina_elegida %}selected{% endif %}>{{ c }}</option>
-                {% endfor %}
-            </select>
-        </label>
+            <label>Tipo de cocina:
+                <select name="cocina">
+                    <option value="">Todas</option>
+                    {% for c in cocinas %}
+                        <option value="{{ c }}" {% if c == cocina_elegida %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
 
-        <label>Presupuesto máximo ($):
-            <input type="number" name="costo_max" min="0" value="{{ costo_max }}">
-        </label>
+        <div>
+            <label>Presupuesto máximo ($):
+                <input type="number" name="costo_max" min="0" value="{{ costo_max }}">
+            </label>
 
-        <label>
-            <input type="checkbox" name="junaeb" value="1" {% if junaeb %}checked{% endif %}>
-            Acepta JUNAEB
-        </label>
+            <label>Número de personas:
+                <input type="number" name="personas" min="1" value="{{ personas }}">
+            </label>
+
+            <label>Método de pago:
+                <select name="pago">
+                    <option value="">Cualquiera</option>
+                    <option value="efectivo" {% if pago_elegido == 'efectivo' %}selected{% endif %}>Efectivo</option>
+                    <option value="tarjeta" {% if pago_elegido == 'tarjeta' %}selected{% endif %}>Tarjeta</option>
+                    <option value="transferencia" {% if pago_elegido == 'transferencia' %}selected{% endif %}>Transferencia</option>
+                </select>
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" name="junaeb" value="1" {% if junaeb %}checked{% endif %}>
+                Acepta JUNAEB
+            </label>
+            <label>
+                <input type="checkbox" name="accesible" value="1" {% if accesible %}checked{% endif %}>
+                Accesible
+            </label>
+            <label>
+                <input type="checkbox" name="mascotas" value="1" {% if mascotas %}checked{% endif %}>
+                Acepta mascotas
+            </label>
+            <label>
+                <input type="checkbox" name="ninos" value="1" {% if ninos %}checked{% endif %}>
+                Apto para niños
+            </label>
+        </div>
 
         <button type="submit">Filtrar</button>
         <a href="/">Limpiar</a>

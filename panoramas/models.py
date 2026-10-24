@@ -14,9 +14,23 @@ class Panorama(models.Model):
     acepta_junaeb = models.BooleanField(default=False)
     tipo_cocina = models.CharField(max_length=60, blank=True)
 
+    # Número de personas (vacío = sin límite)
+    capacidad_maxima = models.PositiveIntegerField(null=True, blank=True)
+
+    # Métodos de pago
+    acepta_efectivo = models.BooleanField(default=True)
+    acepta_tarjeta = models.BooleanField(default=False)
+    acepta_transferencia = models.BooleanField(default=False)
+
+    # Necesidades específicas
+    accesible = models.BooleanField(default=False)
+    acepta_mascotas = models.BooleanField(default=False)
+    apto_ninos = models.BooleanField(default=False)
+
     def __str__(self):
         return self.nombre
-#La línea ForeignKey conecta cada reseña con un panorama, y ordering deja las más recientes primero.
+
+
 class Resena(models.Model):
     panorama = models.ForeignKey(
         Panorama, on_delete=models.CASCADE, related_name='resenas'
