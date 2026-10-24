@@ -1,0 +1,122 @@
+[
+{
+  "model": "panoramas.panorama",
+  "pk": 1,
+  "fields": {
+    "nombre": "Parque Bicentenario",
+    "descripcion": "",
+    "categoria": "Aire libre",
+    "direccion": "Av. Bicentenario 3800",
+    "comuna": "Vitacura",
+    "latitud": -33.4,
+    "longitud": -70.6,
+    "costo": 0,
+    "horario": "",
+    "acepta_junaeb": false,
+    "tipo_cocina": "",
+    "capacidad_maxima": null,
+    "acepta_efectivo": false,
+    "acepta_tarjeta": false,
+    "acepta_transferencia": false,
+    "accesible": true,
+    "acepta_mascotas": true,
+    "apto_ninos": true
+  }
+},
+{
+  "model": "panoramas.panorama",
+  "pk": 2,
+  "fields": {
+    "nombre": "Cerro Santa Lucía",
+    "descripcion": "",
+    "categoria": "Aire libre",
+    "direccion": "Av. Libertador Bernardo O’Higgins s/n",
+    "comuna": "Santiago",
+    "latitud": -33.441,
+    "longitud": -74.6439,
+    "costo": 0,
+    "horario": "",
+    "acepta_junaeb": false,
+    "tipo_cocina": "",
+    "capacidad_maxima": null,
+    "acepta_efectivo": false,
+    "acepta_tarjeta": false,
+    "acepta_transferencia": false,
+    "accesible": false,
+    "acepta_mascotas": false,
+    "apto_ninos": true
+  }
+},
+{
+  "model": "panoramas.panorama",
+  "pk": 3,
+  "fields": {
+    "nombre": "Museo de la Memoria",
+    "descripcion": "",
+    "categoria": "Cultura",
+    "direccion": "Matucana 501",
+    "comuna": "Santiago",
+    "latitud": -33.4416,
+    "longitud": -70.679,
+    "costo": 0,
+    "horario": "",
+    "acepta_junaeb": false,
+    "tipo_cocina": "",
+    "capacidad_maxima": 200,
+    "acepta_efectivo": false,
+    "acepta_tarjeta": false,
+    "acepta_transferencia": false,
+    "accesible": true,
+    "acepta_mascotas": false,
+    "apto_ninos": true
+  }
+},
+{
+  "model": "panoramas.panorama",
+  "pk": 4,
+  "fields": {
+    "nombre": "Mercado Central",
+    "descripcion": "",
+    "categoria": "Comida",
+    "direccion": "San Pablo 967",
+    "comuna": "Santiago",
+    "latitud": -33.4326,
+    "longitud": -70.6513,
+    "costo": 8000,
+    "horario": "",
+    "acepta_junaeb": true,
+    "tipo_cocina": "Chilena",
+    "capacidad_maxima": 150,
+    "acepta_efectivo": true,
+    "acepta_tarjeta": true,
+    "acepta_transferencia": false,
+    "accesible": true,
+    "acepta_mascotas": false,
+    "apto_ninos": true
+  }
+},
+{
+  "model": "panoramas.panorama",
+  "pk": 5,
+  "fields": {
+    "nombre": "Café en Barrio Italia",
+    "descripcion": "",
+    "categoria": "Comida",
+    "direccion": "Av. Italia 1200",
+    "comuna": "Providencia",
+    "latitud": -33.45,
+    "longitud": -70.628,
+    "costo": 5000,
+    "horario": "",
+    "acepta_junaeb": true,
+    "tipo_cocina": "Cafetería",
+    "capacidad_maxima": 30,
+    "acepta_efectivo": true,
+    "acepta_tarjeta": true,
+    "acepta_transferencia": false,
+    "accesible": false,
+    "acepta_mascotas": false,
+    "apto_ninos": true
+  }
+}
+]
