@@ -1,101 +1,112 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Panoramas en Santiago</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="{% static 'panoramas/estilos.css' %}">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
-    <h1>Panoramas en Santiago</h1>
-    <p><a href="{% url 'mis_guardados' %}">Mis guardados</a></p>
+    <header class="encabezado">
+        <h1>Panoramas en Santiago</h1>
+        <a href="{% url 'mis_guardados' %}">Mis guardados</a>
+    </header>
 
-    <form method="get">
-        <div>
-            <label>Comuna:
-                <select name="comuna">
-                    <option value="">Todas</option>
-                    {% for c in comunas %}
-                        <option value="{{ c }}" {% if c == comuna_elegida %}selected{% endif %}>{{ c }}</option>
-                    {% endfor %}
-                </select>
-            </label>
+    <main class="contenedor">
+        <form method="get" class="filtros">
+            <div class="fila">
+                <label>Comuna
+                    <select name="comuna">
+                        <option value="">Todas</option>
+                        {% for c in comunas %}
+                            <option value="{{ c }}" {% if c == comuna_elegida %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
 
-            <label>Categoría:
-                <select name="categoria">
-                    <option value="">Todas</option>
-                    {% for c in categorias %}
-                        <option value="{{ c }}" {% if c == categoria_elegida %}selected{% endif %}>{{ c }}</option>
-                    {% endfor %}
-                </select>
-            </label>
+                <label>Categoría
+                    <select name="categoria">
+                        <option value="">Todas</option>
+                        {% for c in categorias %}
+                            <option value="{{ c }}" {% if c == categoria_elegida %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
 
-            <label>Tipo de cocina:
-                <select name="cocina">
-                    <option value="">Todas</option>
-                    {% for c in cocinas %}
-                        <option value="{{ c }}" {% if c == cocina_elegida %}selected{% endif %}>{{ c }}</option>
-                    {% endfor %}
-                </select>
-            </label>
+                <label>Tipo de cocina
+                    <select name="cocina">
+                        <option value="">Todas</option>
+                        {% for c in cocinas %}
+                            <option value="{{ c }}" {% if c == cocina_elegida %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>Presupuesto máximo ($)
+                    <input type="number" name="costo_max" min="0" value="{{ costo_max }}">
+                </label>
+
+                <label>Número de personas
+                    <input type="number" name="personas" min="1" value="{{ personas }}">
+                </label>
+
+                <label>Método de pago
+                    <select name="pago">
+                        <option value="">Cualquiera</option>
+                        <option value="efectivo" {% if pago_elegido == 'efectivo' %}selected{% endif %}>Efectivo</option>
+                        <option value="tarjeta" {% if pago_elegido == 'tarjeta' %}selected{% endif %}>Tarjeta</option>
+                        <option value="transferencia" {% if pago_elegido == 'transferencia' %}selected{% endif %}>Transferencia</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="fila">
+                <label class="check">
+                    <input type="checkbox" name="junaeb" value="1" {% if junaeb %}checked{% endif %}>
+                    Acepta JUNAEB
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="accesible" value="1" {% if accesible %}checked{% endif %}>
+                    Accesible
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="mascotas" value="1" {% if mascotas %}checked{% endif %}>
+                    Acepta mascotas
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="ninos" value="1" {% if ninos %}checked{% endif %}>
+                    Apto para niños
+                </label>
+            </div>
+
+            <button type="submit" class="boton">Filtrar</button>
+            <a href="/">Limpiar</a>
+        </form>
+
+        <div id="mapa"></div>
+
+        <div class="tarjetas">
+            {% for p in panoramas %}
+                <article class="tarjeta">
+                    <h2><a href="{% url 'detalle_panorama' p.pk %}">{{ p.nombre }}</a></h2>
+                    <p>{{ p.comuna }} · {{ p.categoria }}</p>
+                    <p>
+                        <span class="etiqueta">{% if p.costo == 0 %}Gratis{% else %}${{ p.costo }}{% endif %}</span>
+                        {% if p.acepta_junaeb %}
+                            <span class="etiqueta junaeb">JUNAEB · {{ p.tipo_cocina }}</span>
+                        {% endif %}
+                    </p>
+                </article>
+            {% endfor %}
         </div>
 
-        <div>
-            <label>Presupuesto máximo ($):
-                <input type="number" name="costo_max" min="0" value="{{ costo_max }}">
-            </label>
-
-            <label>Número de personas:
-                <input type="number" name="personas" min="1" value="{{ personas }}">
-            </label>
-
-            <label>Método de pago:
-                <select name="pago">
-                    <option value="">Cualquiera</option>
-                    <option value="efectivo" {% if pago_elegido == 'efectivo' %}selected{% endif %}>Efectivo</option>
-                    <option value="tarjeta" {% if pago_elegido == 'tarjeta' %}selected{% endif %}>Tarjeta</option>
-                    <option value="transferencia" {% if pago_elegido == 'transferencia' %}selected{% endif %}>Transferencia</option>
-                </select>
-            </label>
-        </div>
-
-        <div>
-            <label>
-                <input type="checkbox" name="junaeb" value="1" {% if junaeb %}checked{% endif %}>
-                Acepta JUNAEB
-            </label>
-            <label>
-                <input type="checkbox" name="accesible" value="1" {% if accesible %}checked{% endif %}>
-                Accesible
-            </label>
-            <label>
-                <input type="checkbox" name="mascotas" value="1" {% if mascotas %}checked{% endif %}>
-                Acepta mascotas
-            </label>
-            <label>
-                <input type="checkbox" name="ninos" value="1" {% if ninos %}checked{% endif %}>
-                Apto para niños
-            </label>
-        </div>
-
-        <button type="submit">Filtrar</button>
-        <a href="/">Limpiar</a>
-    </form>
-
-    <div id="mapa" style="height: 400px; width: 100%;"></div>
-
-    {% for p in panoramas %}
-        <div>
-            <h2><a href="{% url 'detalle_panorama' p.pk %}">{{ p.nombre }}</a></h2>
-            <p>{{ p.comuna }} · {{ p.categoria }}</p>
-            <p>{% if p.costo == 0 %}Gratis{% else %}${{ p.costo }}{% endif %}</p>
-            {% if p.acepta_junaeb %}
-                <p>Acepta JUNAEB · Cocina: {{ p.tipo_cocina }}</p>
-            {% endif %}
-        </div>
-    {% empty %}
-        <p>No hay panoramas con esos filtros.</p>
-    {% endfor %}
+        {% if not panoramas %}
+            <p class="vacio">No hay panoramas con esos filtros.</p>
+        {% endif %}
+    </main>
 
     {{ datos_mapa|json_script:"datos-mapa" }}
     <script>

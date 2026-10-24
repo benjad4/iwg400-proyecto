@@ -1,28 +1,39 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mis guardados</title>
+    <link rel="stylesheet" href="{% static 'panoramas/estilos.css' %}">
 </head>
 <body>
-    <a href="{% url 'lista_panoramas' %}">← Volver a la lista</a>
-    <h1>Mis guardados</h1>
+    <header class="encabezado">
+        <h1>Mis guardados</h1>
+        <a href="{% url 'lista_panoramas' %}">← Volver a la lista</a>
+    </header>
 
-    {% for p in panoramas %}
-        <div>
-            <h2><a href="{% url 'detalle_panorama' p.pk %}">{{ p.nombre }}</a></h2>
-            <ul>
-                <li>Dirección: {{ p.direccion }}, {{ p.comuna }}</li>
-                <li>Costo: {% if p.costo == 0 %}Gratis{% else %}${{ p.costo }}{% endif %}</li>
-                <li>Horario: {% if p.horario %}{{ p.horario }}{% else %}No informado{% endif %}</li>
-            </ul>
-            <form method="post" action="{% url 'quitar_panorama' p.pk %}">
-                {% csrf_token %}
-                <button type="submit">Quitar</button>
-            </form>
+    <main class="contenedor">
+        <div class="tarjetas">
+            {% for p in panoramas %}
+                <article class="tarjeta">
+                    <h2><a href="{% url 'detalle_panorama' p.pk %}">{{ p.nombre }}</a></h2>
+                    <p>Dirección: {{ p.direccion }}, {{ p.comuna }}</p>
+                    <p>
+                        <span class="etiqueta">{% if p.costo == 0 %}Gratis{% else %}${{ p.costo }}{% endif %}</span>
+                    </p>
+                    <p>Horario: {% if p.horario %}{{ p.horario }}{% else %}No informado{% endif %}</p>
+                    <form method="post" action="{% url 'quitar_panorama' p.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="boton quitar">Quitar</button>
+                    </form>
+                </article>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p>Aún no has guardado ningún panorama.</p>
-    {% endfor %}
+
+        {% if not panoramas %}
+            <p class="vacio">Aún no has guardado ningún panorama.</p>
+        {% endif %}
+    </main>
 </body>
 </html>

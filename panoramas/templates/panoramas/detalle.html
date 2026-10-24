@@ -1,56 +1,70 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ panorama.nombre }}</title>
+    <link rel="stylesheet" href="{% static 'panoramas/estilos.css' %}">
 </head>
 <body>
-    <a href="{% url 'lista_panoramas' %}">← Volver a la lista</a>
+    <header class="encabezado">
+        <h1>Panoramas en Santiago</h1>
+        <a href="{% url 'lista_panoramas' %}">← Volver a la lista</a>
+    </header>
 
-    <h1>{{ panorama.nombre }}</h1>
-    <p>{{ panorama.descripcion }}</p>
-        {% if esta_guardado %}
-        <p>✔ Guardado · <a href="{% url 'mis_guardados' %}">Ver mis guardados</a></p>
-    {% else %}
-        <form method="post" action="{% url 'guardar_panorama' panorama.pk %}">
-            {% csrf_token %}
-            <button type="submit">Guardar resumen</button>
-        </form>
-    {% endif %}
+    <main class="contenedor">
+        <section class="ficha">
+            <h1>{{ panorama.nombre }}</h1>
+            <p>{{ panorama.descripcion }}</p>
 
-    <ul>
-        <li>Categoría: {{ panorama.categoria }}</li>
-        <li>Dirección: {{ panorama.direccion }}, {{ panorama.comuna }}</li>
-        <li>Costo: {% if panorama.costo == 0 %}Gratis{% else %}${{ panorama.costo }}{% endif %}</li>
-        <li>Horario: {% if panorama.horario %}{{ panorama.horario }}{% else %}No informado{% endif %}</li>
+            {% if esta_guardado %}
+                <p class="guardado">✔ Guardado · <a href="{% url 'mis_guardados' %}">Ver mis guardados</a></p>
+            {% else %}
+                <form method="post" action="{% url 'guardar_panorama' panorama.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton">Guardar resumen</button>
+                </form>
+            {% endif %}
+
+            <ul class="datos">
+                <li>Categoría: {{ panorama.categoria }}</li>
+                <li>Dirección: {{ panorama.direccion }}, {{ panorama.comuna }}</li>
+                <li>Costo: {% if panorama.costo == 0 %}Gratis{% else %}${{ panorama.costo }}{% endif %}</li>
+                <li>Horario: {% if panorama.horario %}{{ panorama.horario }}{% else %}No informado{% endif %}</li>
                 <li>Capacidad: {% if panorama.capacidad_maxima %}hasta {{ panorama.capacidad_maxima }} personas{% else %}sin límite informado{% endif %}</li>
-        <li>Pago: {% if panorama.acepta_efectivo %}Efectivo {% endif %}{% if panorama.acepta_tarjeta %}Tarjeta {% endif %}{% if panorama.acepta_transferencia %}Transferencia{% endif %}</li>
-        <li>Accesible: {% if panorama.accesible %}Sí{% else %}No{% endif %} · Mascotas: {% if panorama.acepta_mascotas %}Sí{% else %}No{% endif %} · Niños: {% if panorama.apto_ninos %}Sí{% else %}No{% endif %}</li>
-        
-        {% if panorama.acepta_junaeb %}
-            <li>Acepta JUNAEB · Cocina: {{ panorama.tipo_cocina }}</li>
-        {% endif %}
-    </ul>
+                <li>Pago: {% if panorama.acepta_efectivo %}Efectivo {% endif %}{% if panorama.acepta_tarjeta %}Tarjeta {% endif %}{% if panorama.acepta_transferencia %}Transferencia{% endif %}</li>
+                <li>Accesible: {% if panorama.accesible %}Sí{% else %}No{% endif %} · Mascotas: {% if panorama.acepta_mascotas %}Sí{% else %}No{% endif %} · Niños: {% if panorama.apto_ninos %}Sí{% else %}No{% endif %}</li>
+                {% if panorama.acepta_junaeb %}
+                    <li>Acepta JUNAEB · Cocina: {{ panorama.tipo_cocina }}</li>
+                {% endif %}
+            </ul>
+        </section>
 
-    <h2>Reseñas</h2>
-    {% if promedio %}
-        <p>Valoración promedio: {{ promedio|floatformat:1 }} / 5 ({{ resenas.count }} reseñas)</p>
-    {% endif %}
+        <section class="ficha">
+            <h2>Reseñas</h2>
+            {% if promedio %}
+                <p class="nota">★ {{ promedio|floatformat:1 }} / 5 ({{ resenas.count }} reseñas)</p>
+            {% endif %}
 
-    {% for r in resenas %}
-        <div>
-            <strong>{{ r.autor }}</strong> · {{ r.valoracion }}/5 · {{ r.fecha|date:"d/m/Y" }}
-            <p>{{ r.comentario }}</p>
-        </div>
-    {% empty %}
-        <p>Aún no hay reseñas. ¡Sé el primero!</p>
-    {% endfor %}
+            {% for r in resenas %}
+                <div class="resena">
+                    <strong>{{ r.autor }}</strong> · <span class="nota">{{ r.valoracion }}/5</span> · {{ r.fecha|date:"d/m/Y" }}
+                    <p>{{ r.comentario }}</p>
+                </div>
+            {% empty %}
+                <p class="vacio">Aún no hay reseñas. ¡Sé el primero!</p>
+            {% endfor %}
+        </section>
 
-    <h3>Deja tu reseña</h3>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Publicar</button>
-    </form>
+        <section class="ficha">
+            <h3>Deja tu reseña</h3>
+            <form method="post" class="formulario">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="boton">Publicar</button>
+            </form>
+        </section>
+    </main>
 </body>
 </html>
