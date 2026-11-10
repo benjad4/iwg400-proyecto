@@ -25,3 +25,11 @@ Con los datos de prueba cargados:
 
 - Comida + Tarjeta + Acepta JUNAEB: aparecen Mercado Central y Café en Barrio Italia.
 - Cultura + Acepta JUNAEB: no aparece ningún resultado.
+
+## Problemas frecuentes en Windows
+
+- **"La ejecución de scripts está deshabilitada"** al activar el entorno:
+  ejecutar `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
+- **"Una directiva de Control de aplicaciones bloqueó pip.exe"**:
+  usar `python -m pip install -r requirements.txt`.
+- Si usas Git Bash, activar el entorno con `source env/Scripts/activate`.
