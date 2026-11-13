@@ -18,6 +18,10 @@ CATEGORIAS = {
     "Aire libre": '["leisure"="park"]',
     "Cultura": '["tourism"~"^(museum|gallery)$"]',
     "Comida": '["amenity"~"^(restaurant|cafe)$"]',
+    "Entretención": '["amenity"~"^(cinema|theatre|arts_centre)$"]',
+    "Deporte": '["leisure"~"^(sports_centre|swimming_pool|fitness_centre)$"]',
+    "Turismo": '["tourism"~"^(viewpoint|attraction|zoo)$"]',
+    "Compras y ferias": '["amenity"="marketplace"]',
 }
 
 
@@ -50,11 +54,13 @@ class Command(BaseCommand):
         parser.add_argument("--comunas", nargs="+",
                             default=["Santiago", "Providencia", "Ñuñoa"])
         parser.add_argument("--limite", type=int, default=10)
+        parser.add_argument("--categorias", nargs="+", default=list(CATEGORIAS.keys()))
 
     def handle(self, *args, **opciones):
         creados = 0
         for comuna in opciones["comunas"]:
-            for categoria, filtro in CATEGORIAS.items():
+            for categoria in opciones["categorias"]:
+                filtro = CATEGORIAS[categoria]
                 self.stdout.write(f"{comuna} - {categoria}...")
                 for elemento in consultar(comuna, filtro, opciones["limite"]):
                     if self.guardar(elemento, comuna, categoria):
@@ -76,7 +82,7 @@ class Command(BaseCommand):
         numero = tags.get("addr:housenumber", "")
         direccion = f"{calle} {numero}".strip() or "Dirección por completar"
 
-        gratis = categoria == "Aire libre" or tags.get("fee") == "no"
+        gratis = categoria in ("Aire libre", "Turismo") or tags.get("fee") == "no"
         cocina = ""
         if categoria == "Comida":
             cocina = tags.get("cuisine", "").split(";")[0].replace("_", " ").capitalize()
