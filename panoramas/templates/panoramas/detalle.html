@@ -1,4 +1,5 @@
 {% load static %}
+{% load l10n %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -62,7 +63,7 @@
                 <dl class="mt-4 divide-y divide-white/10 text-sm">
                     <div class="flex justify-between gap-4 py-3">
                         <dt class="text-white/50">Dirección</dt>
-                        <dd class="text-right">{{ panorama.direccion }}, {{ panorama.comuna }}</dd>
+                        <dd class="text-right">{% if panorama.direccion == "Dirección por completar" %}{{ panorama.comuna }}{% else %}{{ panorama.direccion }}, {{ panorama.comuna }}{% endif %}</dd>
                     </div>
                     <div class="flex justify-between gap-4 py-3">
                         <dt class="text-white/50">Horario</dt>
@@ -72,25 +73,23 @@
                         <dt class="text-white/50">Capacidad</dt>
                         <dd class="text-right">{% if panorama.capacidad_maxima %}Hasta {{ panorama.capacidad_maxima }} personas{% else %}Sin límite informado{% endif %}</dd>
                     </div>
-                    <div class="flex justify-between gap-4 py-3">
-                        <dt class="text-white/50">Pago</dt>
-                        <dd class="text-right">{% if panorama.acepta_efectivo or panorama.acepta_tarjeta or panorama.acepta_transferencia %}{% if panorama.acepta_efectivo %}Efectivo {% endif %}{% if panorama.acepta_tarjeta %}Tarjeta {% endif %}{% if panorama.acepta_transferencia %}Transferencia{% endif %}{% else %}No informado{% endif %}</dd>
-                    </div>
                 </dl>
 
-                {% if panorama.costo != 0 %}
-                    <div class="mt-3">
-                        {% if panorama.sitio_web %}
-                            <a href="{{ panorama.sitio_web }}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-3 text-sm transition hover:border-teal-300/40">
-                                <span>Ver precios en su sitio web</span><span class="text-teal-200">↗</span>
-                            </a>
-                        {% else %}
-                            <a href="https://www.google.com/search?q={{ panorama.nombre|urlencode }}+{{ panorama.comuna|urlencode }}+precio+entrada" target="_blank" rel="noopener" class="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-3 text-sm transition hover:border-teal-300/40">
-                                <span>Buscar precios en Google</span><span class="text-teal-200">↗</span>
-                            </a>
-                        {% endif %}
-                    </div>
-                {% endif %}
+                <div class="mt-3 flex flex-col gap-2">
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ panorama.latitud|unlocalize }},{{ panorama.longitud|unlocalize }}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-3 text-sm transition hover:border-teal-300/40">
+                        <span>📍 Ver ubicación en Google Maps</span><span class="text-teal-200">↗</span>
+                    </a>
+
+                    {% if panorama.sitio_web %}
+                        <a href="{{ panorama.sitio_web }}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-3 text-sm transition hover:border-teal-300/40">
+                            <span>{% if panorama.costo != 0 %}Ver precios y más información en su sitio web{% else %}Más información en su sitio web{% endif %}</span><span class="text-teal-200">↗</span>
+                        </a>
+                    {% else %}
+                        <a href="https://www.google.com/search?q={{ panorama.nombre|urlencode }}+{{ panorama.comuna|urlencode }}{% if panorama.costo != 0 %}+precio+entrada{% endif %}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-3 text-sm transition hover:border-teal-300/40">
+                            <span>{% if panorama.costo != 0 %}Buscar precios y más información en Google{% else %}Buscar más información en Google{% endif %}</span><span class="text-teal-200">↗</span>
+                        </a>
+                    {% endif %}
+                </div>
 
                 <div class="mt-4 flex flex-wrap gap-2 text-xs">
                     <span class="rounded-full px-3 py-1 {% if panorama.accesible %}bg-teal-300/15 text-teal-100{% else %}bg-white/5 text-white/40{% endif %}">{% if panorama.accesible %}✓{% else %}✕{% endif %} Accesible</span>
