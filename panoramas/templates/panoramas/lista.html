@@ -100,7 +100,8 @@
         const mapa = L.map('mapa').setView([-33.45, -70.66], 12);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; Colaboradores de OpenStreetMap'
+            attribution: '&copy; Colaboradores de OpenStreetMap',
+            className: 'capa-mapa'
         }).addTo(mapa);
 
         const datos = JSON.parse(document.getElementById('datos-mapa').textContent);

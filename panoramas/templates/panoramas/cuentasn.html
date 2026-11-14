@@ -1,3 +1,31 @@
+<button type="button" id="boton-tema">🌙 Modo nocturno</button>
+<script>
+    (function () {
+        const raiz = document.documentElement;
+        const boton = document.getElementById('boton-tema');
+
+        function aplicar(tema) {
+            if (tema === 'dark') {
+                raiz.setAttribute('data-theme', 'dark');
+                boton.textContent = '☀️ Modo claro';
+            } else {
+                raiz.removeAttribute('data-theme');
+                boton.textContent = '🌙 Modo nocturno';
+            }
+        }
+
+        let guardado = 'light';
+        try { guardado = localStorage.getItem('tema') || 'light'; } catch (e) {}
+        aplicar(guardado);
+
+        boton.addEventListener('click', function () {
+            const nuevo = raiz.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            aplicar(nuevo);
+            try { localStorage.setItem('tema', nuevo); } catch (e) {}
+        });
+    })();
+</script>
+
 {% if user.is_authenticated %}
     <span>Hola, {{ user.username }}</span>
     <form method="post" action="{% url 'logout' %}" style="display:inline">
