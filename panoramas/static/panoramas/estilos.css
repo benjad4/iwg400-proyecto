@@ -234,3 +234,43 @@ a {
     color: #b91c1c;
     border: 1px solid #fecaca;
 }
+
+.pregunta {
+    text-align: center;
+    font-size: 1.6rem;
+    margin: 8px 0 20px;
+}
+
+.opciones {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px;
+}
+
+.opcion {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 16px;
+    text-decoration: none;
+    color: var(--texto);
+    font-weight: 600;
+}
+
+.opcion small {
+    color: var(--gris);
+    font-weight: 400;
+}
+
+.opcion:hover {
+    border-color: var(--verde);
+    background: #ccfbf1;
+}
+
+.aparte {
+    text-align: center;
+    margin-top: 24px;
+}   

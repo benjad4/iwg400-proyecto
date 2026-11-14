@@ -87,7 +87,11 @@ class Command(BaseCommand):
         if categoria == "Comida":
             cocina = tags.get("cuisine", "").split(";")[0].replace("_", " ").capitalize()
 
-        _, creado = Panorama.objects.get_or_create(
+        sitio = (tags.get("website") or tags.get("contact:website") or "").strip()
+        if sitio and not sitio.startswith("http"):
+            sitio = "https://" + sitio
+
+        panorama, creado = Panorama.objects.get_or_create(
             nombre=nombre,
             comuna=comuna,
             defaults={
@@ -98,8 +102,12 @@ class Command(BaseCommand):
                 "costo": 0 if gratis else 5000,
                 "descripcion": "" if gratis else "[Por completar] Costo, horario y JUNAEB sin verificar.",
                 "horario": tags.get("opening_hours", "")[:100],
+                "sitio_web": sitio[:300],
                 "tipo_cocina": cocina[:60],
                 "accesible": tags.get("wheelchair") == "yes",
             },
         )
+        if not creado and sitio and not panorama.sitio_web:
+            panorama.sitio_web = sitio[:300]
+            panorama.save(update_fields=["sitio_web"])
         return creado

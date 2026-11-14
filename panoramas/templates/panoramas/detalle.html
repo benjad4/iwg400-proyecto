@@ -30,7 +30,18 @@
             <ul class="datos">
                 <li>Categoría: {{ panorama.categoria }}</li>
                 <li>Dirección: {{ panorama.direccion }}, {{ panorama.comuna }}</li>
-                <li>Costo: {% if panorama.costo == 0 %}Gratis{% else %}${{ panorama.costo }}{% endif %}</li>
+                <li>Costo:
+                    {% if panorama.costo == 0 %}
+                        Gratis
+                    {% else %}
+                        De pago ·
+                        {% if panorama.sitio_web %}
+                            <a href="{{ panorama.sitio_web }}" target="_blank" rel="noopener">Ver precios en su sitio web</a>
+                        {% else %}
+                            <a href="https://www.google.com/search?q={{ panorama.nombre|urlencode }}+{{ panorama.comuna|urlencode }}+precio+entrada" target="_blank" rel="noopener">Buscar precios en Google</a>
+                        {% endif %}
+                    {% endif %}
+                </li>
                 <li>Horario: {% if panorama.horario %}{{ panorama.horario }}{% else %}No informado{% endif %}</li>
                 <li>Capacidad: {% if panorama.capacidad_maxima %}hasta {{ panorama.capacidad_maxima }} personas{% else %}sin límite informado{% endif %}</li>
                 <li>Pago: {% if panorama.acepta_efectivo %}Efectivo {% endif %}{% if panorama.acepta_tarjeta %}Tarjeta {% endif %}{% if panorama.acepta_transferencia %}Transferencia{% endif %}</li>

@@ -1,4 +1,4 @@
-from django.db.models import Avg, Q
+from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from .forms import ResenaForm
@@ -124,3 +124,23 @@ def mis_guardados(request):
     ids = request.session.get('guardados', [])
     panoramas = Panorama.objects.filter(pk__in=ids)
     return render(request, 'panoramas/guardados.html', {'panoramas': panoramas})
+
+
+def elegir_comuna(request):
+    comunas = (Panorama.objects.values('comuna')
+               .annotate(total=Count('id')).order_by('comuna'))
+    return render(request, 'panoramas/comunas.html', {'comunas': comunas})
+
+
+
+def elegir_categoria(request):
+    comuna = request.GET.get('comuna', '')
+    if not comuna:
+        return redirect('elegir_comuna')
+    categorias = (Panorama.objects.filter(comuna=comuna)
+                  .values('categoria').annotate(total=Count('id'))
+                  .order_by('categoria'))
+    return render(request, 'panoramas/categorias.html', {
+        'comuna': comuna,
+        'categorias': categorias,
+    })

@@ -11,6 +11,7 @@ class Panorama(models.Model):
     longitud = models.FloatField()
     costo = models.PositiveIntegerField(default=0)
     horario = models.CharField(max_length=100, blank=True)
+    sitio_web = models.URLField(max_length=300, blank=True)
     acepta_junaeb = models.BooleanField(default=False)
     tipo_cocina = models.CharField(max_length=60, blank=True)
 
