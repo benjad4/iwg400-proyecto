@@ -59,7 +59,10 @@ def lista_panoramas(request):
     cocinas = (Panorama.objects.exclude(tipo_cocina='')
                .order_by('tipo_cocina')
                .values_list('tipo_cocina', flat=True).distinct())
-    datos_mapa = list(panoramas.values('nombre', 'latitud', 'longitud'))
+    datos_mapa = list(panoramas.values(
+        'pk', 'nombre', 'latitud', 'longitud',
+        'categoria', 'comuna', 'costo', 'direccion',
+    ))
 
     return render(request, 'panoramas/lista.html', {
         'panoramas': panoramas,
