@@ -49,7 +49,6 @@
                 <span class="font-semibold">Filtros</span>
                 {% if comuna_elegida %}<span class="rounded-full bg-teal-300/15 px-3 py-1 text-xs text-teal-100">📍 {{ comuna_elegida }}</span>{% endif %}
                 {% if categoria_elegida %}<span class="rounded-full bg-teal-300/15 px-3 py-1 text-xs text-teal-100">{{ categoria_elegida }}</span>{% endif %}
-                {% if cocina_elegida %}<span class="rounded-full bg-teal-300/15 px-3 py-1 text-xs text-teal-100">{{ cocina_elegida }}</span>{% endif %}
                 {% if costo_elegido == 'gratis' %}<span class="rounded-full bg-teal-300/15 px-3 py-1 text-xs text-teal-100">Gratis</span>{% endif %}
                 {% if costo_elegido == 'pago' %}<span class="rounded-full bg-teal-300/15 px-3 py-1 text-xs text-teal-100">De pago</span>{% endif %}
                 {% if accesible %}<span class="rounded-full bg-teal-300/15 px-3 py-1 text-xs text-teal-100">Accesible</span>{% endif %}
@@ -75,15 +74,6 @@
                     </select>
                 </label>
 
-                <label class="text-xs text-white/60">Tipo de cocina
-                    <select name="cocina" class="mt-1 w-full rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-white outline-none focus:border-teal-300/60">
-                        <option value="">Todas</option>
-                        {% for c in cocinas %}
-                            <option value="{{ c }}" {% if c == cocina_elegida %}selected{% endif %}>{{ c }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-
                 <label class="text-xs text-white/60">Costo
                     <select name="costo" class="mt-1 w-full rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-white outline-none focus:border-teal-300/60">
                         <option value="">Todos</option>
@@ -92,12 +82,31 @@
                     </select>
                 </label>
 
+                <label class="text-xs text-white/40">Presupuesto mínimo <span class="text-teal-200/70">(próximamente)</span>
+                    <input type="number" disabled placeholder="Próximamente" class="mt-1 w-full cursor-not-allowed rounded-xl border border-white/10 bg-slate-900/30 px-3 py-2 text-sm text-white/40">
+                </label>
+
+                <label class="text-xs text-white/40">Presupuesto máximo <span class="text-teal-200/70">(próximamente)</span>
+                    <input type="number" disabled placeholder="Próximamente" class="mt-1 w-full cursor-not-allowed rounded-xl border border-white/10 bg-slate-900/30 px-3 py-2 text-sm text-white/40">
+                </label>
+
+                <label class="text-xs text-white/40">Horario <span class="text-teal-200/70">(próximamente)</span>
+                    <select disabled class="mt-1 w-full cursor-not-allowed rounded-xl border border-white/10 bg-slate-900/30 px-3 py-2 text-sm text-white/40">
+                        <option>Próximamente</option>
+                    </select>
+                </label>
+
                 <label class="flex items-center gap-2 text-sm text-white/80">
                     <input type="checkbox" name="accesible" value="1" {% if accesible %}checked{% endif %} class="h-4 w-4 accent-teal-300">
                     Accesible
                 </label>
 
-                <div class="flex items-center gap-3 sm:justify-end">
+                <label class="flex cursor-not-allowed items-center gap-2 text-sm text-white/40">
+                    <input type="checkbox" disabled class="h-4 w-4">
+                    Acepta JUNAEB <span class="text-xs text-teal-200/70">(próximamente)</span>
+                </label>
+
+                <div class="flex items-center gap-3 sm:col-span-2 sm:justify-end">
                     <a href="{% url 'lista_panoramas' %}" class="text-sm text-white/60 underline-offset-4 hover:underline">Limpiar</a>
                     <button type="submit" class="rounded-full bg-teal-300 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Filtrar</button>
                 </div>
