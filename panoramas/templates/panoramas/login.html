@@ -5,24 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Iniciar sesión</title>
-    <link rel="stylesheet" href="{% static 'panoramas/estilos.css' %}">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 </head>
-<body>
-    <header class="encabezado">
-        <h1>Panoramas en Santiago</h1>
-        <a href="{% url 'elegir_comuna' %}">← Volver al inicio</a>
-    </header>
+<body class="min-h-screen bg-gradient-to-br from-[#2f4247] via-[#1a2427] to-[#0a0e0f] text-white antialiased">
 
-    <main class="contenedor">
-        <section class="ficha">
-            <h2>Iniciar sesión</h2>
-            <form method="post" class="formulario">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="boton">Entrar</button>
-            </form>
-            <p>¿No tienes cuenta? <a href="{% url 'registro' %}">Regístrate</a></p>
-        </section>
-    </main>
+    <div class="pointer-events-none fixed -left-24 -top-24 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl"></div>
+    <div class="pointer-events-none fixed -bottom-32 -right-24 h-96 w-96 rounded-full bg-emerald-300/10 blur-3xl"></div>
+
+    <div class="relative mx-auto max-w-md px-4 pb-16">
+
+        <header class="flex flex-wrap items-center justify-between gap-3 py-5">
+            <a href="{% url 'elegir_comuna' %}" class="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm transition hover:bg-white/10">← Volver al inicio</a>
+            <a href="{% url 'sorpresa' %}" class="rounded-full bg-teal-300 px-4 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">🎲 Sorpréndeme</a>
+        </header>
+
+        <main class="mt-6">
+            <h1 class="text-4xl font-bold leading-tight tracking-tight">Iniciar sesión</h1>
+            <p class="mt-2 text-sm text-white/60">Entra con tu cuenta para guardar tus panoramas.</p>
+
+            <section class="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20 backdrop-blur-md">
+                <form method="post" class="[&_p]:mb-4 [&_label]:block [&_label]:text-xs [&_label]:text-white/60 [&_input]:mt-1 [&_input]:w-full [&_input]:rounded-xl [&_input]:border [&_input]:border-white/10 [&_input]:bg-slate-900/60 [&_input]:px-3 [&_input]:py-2 [&_input]:text-sm [&_input]:text-white [&_input]:outline-none [&_.errorlist]:mb-3 [&_.errorlist]:list-none [&_.errorlist]:p-0 [&_.errorlist]:text-sm [&_.errorlist]:text-rose-300">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="w-full rounded-full bg-teal-300 px-6 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Entrar</button>
+                </form>
+            </section>
+
+            <p class="mt-6 text-center text-sm text-white/60">¿No tienes cuenta? <a href="{% url 'registro' %}" class="text-teal-200 underline underline-offset-4">Regístrate</a></p>
+        </main>
+    </div>
 </body>
 </html>

@@ -18,6 +18,7 @@
         <header class="flex flex-wrap items-center justify-between gap-3 py-5">
             <a href="{% url 'elegir_comuna' %}" class="text-lg font-semibold tracking-tight">Panoramas en Santiago</a>
             <div class="flex flex-wrap items-center gap-2">
+                <a href="{% url 'sorpresa' %}" class="rounded-full bg-teal-300 px-4 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">🎲 Sorpréndeme</a>
                 <a href="{% url 'mis_guardados' %}" class="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm transition hover:bg-white/10">Mis guardados</a>
                 {% include 'panoramas/cuentas_tw.html' %}
             </div>

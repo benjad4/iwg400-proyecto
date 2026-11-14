@@ -164,3 +164,26 @@ def registro(request):
     else:
         form = UserCreationForm()
     return render(request, 'panoramas/registro.html', {'form': form})
+
+
+
+
+def sorpresa(request):
+    comunas = (Panorama.objects.order_by('comuna')
+               .values_list('comuna', flat=True).distinct())
+    elegidas = request.GET.getlist('comuna')
+    buscado = bool(request.GET.get('buscar'))
+    resultado = None
+
+    if buscado:
+        lugares = Panorama.objects.all()
+        if elegidas:
+            lugares = lugares.filter(comuna__in=elegidas)
+        resultado = lugares.order_by('?').first()
+
+    return render(request, 'panoramas/sorpresa.html', {
+        'comunas': comunas,
+        'elegidas': elegidas,
+        'buscado': buscado,
+        'resultado': resultado,
+    })
