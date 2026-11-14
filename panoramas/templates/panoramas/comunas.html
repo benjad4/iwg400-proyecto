@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Panoramas en Santiago</title>
+    <link rel="stylesheet" href="{% static 'panoramas/estilos.css' %}">
+</head>
+<body>
+    <header class="encabezado">
+        <h1>Panoramas en Santiago</h1>
+        <a href="{% url 'mis_guardados' %}">Mis guardados</a>
+    </header>
+
+    <main class="contenedor">
+        <h2 class="pregunta">¿A qué comuna quieres ir?</h2>
+        <div class="opciones">
+            {% for c in comunas %}
+                <a class="opcion" href="{% url 'elegir_categoria' %}?comuna={{ c.comuna|urlencode }}">
+                    {{ c.comuna }}<small>{{ c.total }} lugares</small>
+                </a>
+            {% endfor %}
+        </div>
+        <p class="aparte"><a href="{% url 'lista_panoramas' %}">Ver todo el mapa</a></p>
+    </main>
+</body>
+</html>
