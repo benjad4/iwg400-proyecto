@@ -6,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Panoramas en Santiago</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
     <link rel="stylesheet" href="{% static 'panoramas/estilos.css' %}">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 </head>
 <body>
     <header class="encabezado">
@@ -117,9 +120,17 @@
         }).addTo(mapa);
 
         const datos = JSON.parse(document.getElementById('datos-mapa').textContent);
+        const grupo = L.markerClusterGroup();
+
         datos.forEach(function (p) {
-            L.marker([p.latitud, p.longitud]).addTo(mapa).bindPopup(p.nombre);
+            grupo.addLayer(L.marker([p.latitud, p.longitud]).bindPopup(p.nombre));
         });
+
+        mapa.addLayer(grupo);
+
+        if (datos.length > 0) {
+            mapa.fitBounds(grupo.getBounds(), { padding: [30, 30], maxZoom: 16 });
+        }
     </script>
 </body>
 </html>
