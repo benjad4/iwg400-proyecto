@@ -11,6 +11,7 @@
     <header class="encabezado">
         <h1>Mis guardados</h1>
         <a href="{% url 'lista_panoramas' %}">← Volver a la lista</a>
+        {% include 'panoramas/cuentasn.html' %}
     </header>
 
     <main class="contenedor">
@@ -20,7 +21,7 @@
                     <h2><a href="{% url 'detalle_panorama' p.pk %}">{{ p.nombre }}</a></h2>
                     <p>Dirección: {{ p.direccion }}, {{ p.comuna }}</p>
                     <p>
-                        <span class="etiqueta">{% if p.costo == 0 %}Gratis{% else %}${{ p.costo }}{% endif %}</span>
+                        <span class="etiqueta">{% if p.costo == 0 %}Gratis{% else %}De pago{% endif %}</span>
                     </p>
                     <p>Horario: {% if p.horario %}{{ p.horario }}{% else %}No informado{% endif %}</p>
                     <form method="post" action="{% url 'quitar_panorama' p.pk %}">

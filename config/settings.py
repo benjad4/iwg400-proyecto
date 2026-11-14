@@ -127,3 +127,7 @@ MAILERS = {
     },
 }
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'elegir_comuna'
+LOGOUT_REDIRECT_URL = 'elegir_comuna'

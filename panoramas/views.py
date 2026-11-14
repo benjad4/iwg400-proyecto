@@ -1,3 +1,5 @@
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -146,3 +148,16 @@ def elegir_categoria(request):
         'comuna': comuna,
         'categorias': categorias,
     })
+
+
+
+def registro(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            usuario = form.save()
+            login(request, usuario)
+            return redirect('elegir_comuna')
+    else:
+        form = UserCreationForm()
+    return render(request, 'panoramas/registro.html', {'form': form})

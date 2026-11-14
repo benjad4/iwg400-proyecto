@@ -20,6 +20,7 @@
             <a href="{% url 'elegir_categoria' %}?comuna={{ comuna_elegida|urlencode }}">Cambiar de categoría</a>
         {% endif %}
         <a href="{% url 'mis_guardados' %}">Mis guardados</a>
+        {% include 'panoramas/cuentasn.html' %}
     </header>
 
     <main class="contenedor">
