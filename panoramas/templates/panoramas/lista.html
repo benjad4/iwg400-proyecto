@@ -15,6 +15,10 @@
 <body>
     <header class="encabezado">
         <h1>Panoramas en Santiago</h1>
+        <a href="{% url 'elegir_comuna' %}">← Cambiar de comuna</a>
+        {% if comuna_elegida %}
+            <a href="{% url 'elegir_categoria' %}?comuna={{ comuna_elegida|urlencode }}">Cambiar de categoría</a>
+        {% endif %}
         <a href="{% url 'mis_guardados' %}">Mis guardados</a>
     </header>
 
