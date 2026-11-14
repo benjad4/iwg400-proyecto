@@ -17,7 +17,7 @@ def lista_panoramas(request):
     comuna = request.GET.get('comuna', '')
     categoria = request.GET.get('categoria', '')
     cocina = request.GET.get('cocina', '')
-    costo_max = request.GET.get('costo_max', '')
+    costo = request.GET.get('costo', '')
     junaeb = request.GET.get('junaeb', '')
     personas = request.GET.get('personas', '')
     pago = request.GET.get('pago', '')
@@ -31,8 +31,10 @@ def lista_panoramas(request):
         panoramas = panoramas.filter(categoria=categoria)
     if cocina:
         panoramas = panoramas.filter(tipo_cocina=cocina)
-    if costo_max.isdigit():
-        panoramas = panoramas.filter(costo__lte=int(costo_max))
+    if costo == 'gratis':
+        panoramas = panoramas.filter(costo=0)
+    elif costo == 'pago':
+        panoramas = panoramas.filter(costo__gt=0)
     if junaeb:
         panoramas = panoramas.filter(acepta_junaeb=True)
     if personas.isdigit():
@@ -66,7 +68,7 @@ def lista_panoramas(request):
         'comuna_elegida': comuna,
         'categoria_elegida': categoria,
         'cocina_elegida': cocina,
-        'costo_max': costo_max,
+        'costo_elegido': costo,
         'junaeb': junaeb,
         'personas': personas,
         'pago_elegido': pago,

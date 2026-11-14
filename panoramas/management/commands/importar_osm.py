@@ -16,12 +16,15 @@ LON_MIN, LON_MAX = -70.85, -70.45
 
 CATEGORIAS = {
     "Aire libre": '["leisure"="park"]',
-    "Cultura": '["tourism"~"^(museum|gallery)$"]',
-    "Comida": '["amenity"~"^(restaurant|cafe)$"]',
+    "Cultura": '[~"^(tourism|amenity)$"~"^(museum|gallery|library)$"]',
+    "Comida": '["amenity"~"^(restaurant|cafe|fast_food)$"]',
     "Entretención": '["amenity"~"^(cinema|theatre|arts_centre)$"]',
-    "Deporte": '["leisure"~"^(sports_centre|swimming_pool|fitness_centre)$"]',
+    "Deporte": '["leisure"~"^(sports_centre|swimming_pool|fitness_centre|skatepark)$"]',
     "Turismo": '["tourism"~"^(viewpoint|attraction|zoo)$"]',
     "Compras y ferias": '["amenity"="marketplace"]',
+    "Mundo nocturno": '["amenity"~"^(nightclub|pub|bar|biergarten)$"]',
+    "Recreativo": '[~"^(leisure|amenity|sport)$"~"^(bowling_alley|miniature_golf|escape_game|amusement_arcade|billiards)$"]',
+    "Cerros y trekking": '["natural"="peak"]',
 }
 
 
@@ -82,7 +85,11 @@ class Command(BaseCommand):
         numero = tags.get("addr:housenumber", "")
         direccion = f"{calle} {numero}".strip() or "Dirección por completar"
 
-        gratis = categoria in ("Aire libre", "Turismo") or tags.get("fee") == "no"
+        gratis = (
+            categoria in ("Aire libre", "Turismo", "Cerros y trekking")
+            or tags.get("fee") == "no"
+            or tags.get("amenity") == "library"
+        )
         cocina = ""
         if categoria == "Comida":
             cocina = tags.get("cuisine", "").split(";")[0].replace("_", " ").capitalize()

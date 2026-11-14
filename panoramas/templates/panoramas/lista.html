@@ -52,40 +52,19 @@
                     </select>
                 </label>
 
-                <label>Presupuesto máximo ($)
-                    <input type="number" name="costo_max" min="0" value="{{ costo_max }}">
-                </label>
-
-                <label>Número de personas
-                    <input type="number" name="personas" min="1" value="{{ personas }}">
-                </label>
-
-                <label>Método de pago
-                    <select name="pago">
-                        <option value="">Cualquiera</option>
-                        <option value="efectivo" {% if pago_elegido == 'efectivo' %}selected{% endif %}>Efectivo</option>
-                        <option value="tarjeta" {% if pago_elegido == 'tarjeta' %}selected{% endif %}>Tarjeta</option>
-                        <option value="transferencia" {% if pago_elegido == 'transferencia' %}selected{% endif %}>Transferencia</option>
+                <label>Costo
+                    <select name="costo">
+                        <option value="">Todos</option>
+                        <option value="gratis" {% if costo_elegido == 'gratis' %}selected{% endif %}>Gratis</option>
+                        <option value="pago" {% if costo_elegido == 'pago' %}selected{% endif %}>De pago</option>
                     </select>
                 </label>
             </div>
 
             <div class="fila">
                 <label class="check">
-                    <input type="checkbox" name="junaeb" value="1" {% if junaeb %}checked{% endif %}>
-                    Acepta JUNAEB
-                </label>
-                <label class="check">
                     <input type="checkbox" name="accesible" value="1" {% if accesible %}checked{% endif %}>
                     Accesible
-                </label>
-                <label class="check">
-                    <input type="checkbox" name="mascotas" value="1" {% if mascotas %}checked{% endif %}>
-                    Acepta mascotas
-                </label>
-                <label class="check">
-                    <input type="checkbox" name="ninos" value="1" {% if ninos %}checked{% endif %}>
-                    Apto para niños
                 </label>
             </div>
 
@@ -101,7 +80,7 @@
                     <h2><a href="{% url 'detalle_panorama' p.pk %}">{{ p.nombre }}</a></h2>
                     <p>{{ p.comuna }} · {{ p.categoria }}</p>
                     <p>
-                        <span class="etiqueta">{% if p.costo == 0 %}Gratis{% else %}${{ p.costo }}{% endif %}</span>
+                        <span class="etiqueta">{% if p.costo == 0 %}Gratis{% else %}De pago{% endif %}</span>
                         {% if p.acepta_junaeb %}
                             <span class="etiqueta junaeb">JUNAEB · {{ p.tipo_cocina }}</span>
                         {% endif %}
