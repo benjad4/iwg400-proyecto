@@ -1,10 +1,11 @@
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from .forms import ResenaForm
-from .models import Panorama
+from .models import Guardado, Panorama
 
 METODOS_PAGO = {
     'efectivo': 'acepta_efectivo',
@@ -87,10 +88,14 @@ def detalle_panorama(request, pk):
     panorama = get_object_or_404(Panorama, pk=pk)
 
     if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect(f"/entrar/?next=/panorama/{pk}/")
         form = ResenaForm(request.POST)
         if form.is_valid():
             resena = form.save(commit=False)
             resena.panorama = panorama
+            resena.usuario = request.user
+            resena.autor = request.user.username
             resena.save()
             return redirect('detalle_panorama', pk=pk)
     else:
@@ -99,37 +104,38 @@ def detalle_panorama(request, pk):
     resenas = panorama.resenas.all()
     promedio = resenas.aggregate(Avg('valoracion'))['valoracion__avg']
 
+    esta_guardado = (
+        request.user.is_authenticated
+        and Guardado.objects.filter(usuario=request.user, panorama=panorama).exists()
+    )
+
     return render(request, 'panoramas/detalle.html', {
         'panorama': panorama,
         'resenas': resenas,
         'promedio': promedio,
         'form': form,
-        'esta_guardado': pk in request.session.get('guardados', []),
+        'esta_guardado': esta_guardado,
     })
 
 
+@login_required
 @require_POST
 def guardar_panorama(request, pk):
-    get_object_or_404(Panorama, pk=pk)
-    guardados = request.session.get('guardados', [])
-    if pk not in guardados:
-        guardados.append(pk)
-    request.session['guardados'] = guardados
+    panorama = get_object_or_404(Panorama, pk=pk)
+    Guardado.objects.get_or_create(usuario=request.user, panorama=panorama)
     return redirect('detalle_panorama', pk=pk)
 
 
+@login_required
 @require_POST
 def quitar_panorama(request, pk):
-    guardados = request.session.get('guardados', [])
-    if pk in guardados:
-        guardados.remove(pk)
-    request.session['guardados'] = guardados
+    Guardado.objects.filter(usuario=request.user, panorama_id=pk).delete()
     return redirect('mis_guardados')
 
 
+@login_required
 def mis_guardados(request):
-    ids = request.session.get('guardados', [])
-    panoramas = Panorama.objects.filter(pk__in=ids)
+    panoramas = Panorama.objects.filter(guardado_por__usuario=request.user)
     return render(request, 'panoramas/guardados.html', {'panoramas': panoramas})
 
 
@@ -137,7 +143,6 @@ def elegir_comuna(request):
     comunas = (Panorama.objects.values('comuna')
                .annotate(total=Count('id')).order_by('comuna'))
     return render(request, 'panoramas/comunas.html', {'comunas': comunas})
-
 
 
 def elegir_categoria(request):
@@ -153,7 +158,6 @@ def elegir_categoria(request):
     })
 
 
-
 def registro(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -164,8 +168,6 @@ def registro(request):
     else:
         form = UserCreationForm()
     return render(request, 'panoramas/registro.html', {'form': form})
-
-
 
 
 def sorpresa(request):

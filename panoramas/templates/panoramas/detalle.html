@@ -46,13 +46,17 @@
                 {% endif %}
 
                 <div class="mt-5">
-                    {% if esta_guardado %}
-                        <p class="rounded-full border border-teal-300/40 bg-teal-300/10 px-5 py-2 text-center text-sm text-teal-100">✔ Guardado · <a href="{% url 'mis_guardados' %}" class="underline underline-offset-4">Ver mis guardados</a></p>
+                    {% if user.is_authenticated %}
+                        {% if esta_guardado %}
+                            <p class="rounded-full border border-teal-300/40 bg-teal-300/10 px-5 py-2 text-center text-sm text-teal-100">✔ Guardado · <a href="{% url 'mis_guardados' %}" class="underline underline-offset-4">Ver mis guardados</a></p>
+                        {% else %}
+                            <form method="post" action="{% url 'guardar_panorama' panorama.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full rounded-full bg-teal-300 px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Guardar resumen</button>
+                            </form>
+                        {% endif %}
                     {% else %}
-                        <form method="post" action="{% url 'guardar_panorama' panorama.pk %}">
-                            {% csrf_token %}
-                            <button type="submit" class="w-full rounded-full bg-teal-300 px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Guardar resumen</button>
-                        </form>
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="block rounded-full border border-teal-300/40 bg-teal-300/10 px-5 py-2.5 text-center text-sm font-semibold text-teal-100 transition hover:bg-teal-300/20">🔒 Inicia sesión para guardar</a>
                     {% endif %}
                 </div>
             </section>
@@ -130,11 +134,20 @@
             <!-- Formulario de reseña -->
             <section class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20 backdrop-blur-md">
                 <h2 class="text-lg font-semibold">Deja tu reseña</h2>
-                <form method="post" class="mt-4 [&_p]:mb-4 [&_label]:block [&_label]:text-xs [&_label]:text-white/60 [&_input]:mt-1 [&_input]:w-full [&_input]:rounded-xl [&_input]:border [&_input]:border-white/10 [&_input]:bg-slate-900/60 [&_input]:px-3 [&_input]:py-2 [&_input]:text-sm [&_input]:text-white [&_input]:outline-none [&_select]:mt-1 [&_select]:w-full [&_select]:rounded-xl [&_select]:border [&_select]:border-white/10 [&_select]:bg-slate-900/60 [&_select]:px-3 [&_select]:py-2 [&_select]:text-sm [&_select]:text-white [&_textarea]:mt-1 [&_textarea]:w-full [&_textarea]:rounded-xl [&_textarea]:border [&_textarea]:border-white/10 [&_textarea]:bg-slate-900/60 [&_textarea]:px-3 [&_textarea]:py-2 [&_textarea]:text-sm [&_textarea]:text-white [&_textarea]:outline-none [&_.errorlist]:mb-1 [&_.errorlist]:list-none [&_.errorlist]:p-0 [&_.errorlist]:text-sm [&_.errorlist]:text-rose-300">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="rounded-full bg-teal-300 px-6 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Publicar</button>
-                </form>
+                {% if user.is_authenticated %}
+                    <p class="mt-1 text-xs text-white/50">Publicarás como <span class="text-teal-200">{{ user.username }}</span>.</p>
+                    <form method="post" class="mt-4 [&_p]:mb-4 [&_label]:block [&_label]:text-xs [&_label]:text-white/60 [&_input]:mt-1 [&_input]:w-full [&_input]:rounded-xl [&_input]:border [&_input]:border-white/10 [&_input]:bg-slate-900/60 [&_input]:px-3 [&_input]:py-2 [&_input]:text-sm [&_input]:text-white [&_input]:outline-none [&_select]:mt-1 [&_select]:w-full [&_select]:rounded-xl [&_select]:border [&_select]:border-white/10 [&_select]:bg-slate-900/60 [&_select]:px-3 [&_select]:py-2 [&_select]:text-sm [&_select]:text-white [&_textarea]:mt-1 [&_textarea]:w-full [&_textarea]:rounded-xl [&_textarea]:border [&_textarea]:border-white/10 [&_textarea]:bg-slate-900/60 [&_textarea]:px-3 [&_textarea]:py-2 [&_textarea]:text-sm [&_textarea]:text-white [&_textarea]:outline-none [&_.errorlist]:mb-1 [&_.errorlist]:list-none [&_.errorlist]:p-0 [&_.errorlist]:text-sm [&_.errorlist]:text-rose-300">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="rounded-full bg-teal-300 px-6 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Publicar</button>
+                    </form>
+                {% else %}
+                    <p class="mt-3 text-sm text-white/60">Para dejar una reseña necesitas una cuenta.</p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="rounded-full bg-teal-300 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Entrar</a>
+                        <a href="{% url 'registro' %}" class="rounded-full border border-white/15 bg-white/5 px-5 py-2 text-sm transition hover:bg-white/10">Crear cuenta</a>
+                    </div>
+                {% endif %}
             </section>
         </main>
     </div>
