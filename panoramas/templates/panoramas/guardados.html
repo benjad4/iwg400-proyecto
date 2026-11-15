@@ -5,35 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mis guardados</title>
-    <link rel="stylesheet" href="{% static 'panoramas/estilos.css' %}">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 </head>
-<body>
-    <header class="encabezado">
-        <h1>Mis guardados</h1>
-        <a href="{% url 'lista_panoramas' %}">← Volver a la lista</a>
-    </header>
+<body class="min-h-screen bg-gradient-to-br from-[#2f4247] via-[#1a2427] to-[#0a0e0f] text-white antialiased">
 
-    <main class="contenedor">
-        <div class="tarjetas">
-            {% for p in panoramas %}
-                <article class="tarjeta">
-                    <h2><a href="{% url 'detalle_panorama' p.pk %}">{{ p.nombre }}</a></h2>
-                    <p>Dirección: {{ p.direccion }}, {{ p.comuna }}</p>
-                    <p>
-                        <span class="etiqueta">{% if p.costo == 0 %}Gratis{% else %}${{ p.costo }}{% endif %}</span>
-                    </p>
-                    <p>Horario: {% if p.horario %}{{ p.horario }}{% else %}No informado{% endif %}</p>
-                    <form method="post" action="{% url 'quitar_panorama' p.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="boton quitar">Quitar</button>
-                    </form>
-                </article>
-            {% endfor %}
-        </div>
+    <div class="pointer-events-none fixed -left-24 -top-24 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl"></div>
+    <div class="pointer-events-none fixed -bottom-32 -right-24 h-96 w-96 rounded-full bg-emerald-300/10 blur-3xl"></div>
 
-        {% if not panoramas %}
-            <p class="vacio">Aún no has guardado ningún panorama.</p>
-        {% endif %}
-    </main>
+    <div class="relative mx-auto max-w-2xl px-4 pb-16">
+
+        <header class="flex flex-wrap items-center justify-between gap-3 py-5">
+            <a href="{% url 'lista_panoramas' %}" class="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm transition hover:bg-white/10">← Volver al mapa</a>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{% url 'sorpresa' %}" class="rounded-full bg-teal-300 px-4 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">🎲 Sorpréndeme</a>
+                {% include 'panoramas/cuentas_tw.html' %}
+            </div>
+        </header>
+
+        <main class="mt-6">
+            <h1 class="text-4xl font-bold leading-tight tracking-tight">Mis guardados</h1>
+            <p class="mt-2 text-sm text-white/60">Los panoramas que guardaste para no perderlos.</p>
+
+            <div class="mt-6 flex flex-col gap-3">
+                {% for p in panoramas %}
+                    <article class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/20 backdrop-blur-md">
+                        <div class="flex items-start gap-4">
+                            <span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-teal-300/15 text-2xl">{% if p.categoria == "Aire libre" %}🌳{% elif p.categoria == "Cultura" %}🏛️{% elif p.categoria == "Comida" %}🍽️{% elif p.categoria == "Entretención" %}🎭{% elif p.categoria == "Deporte" %}⚽{% elif p.categoria == "Turismo" %}🧭{% elif p.categoria == "Compras y ferias" %}🛍️{% elif p.categoria == "Mundo nocturno" %}🌙{% elif p.categoria == "Recreativo" %}🎮{% elif p.categoria == "Cerros y trekking" %}⛰️{% else %}📍{% endif %}</span>
+                            <div class="min-w-0 flex-1">
+                                <a href="{% url 'detalle_panorama' p.pk %}" class="block truncate font-semibold transition hover:text-teal-200">{{ p.nombre }}</a>
+                                <p class="mt-0.5 truncate text-xs text-white/50">{{ p.comuna }} · {{ p.categoria }}</p>
+                                <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                                    <span class="rounded-full bg-teal-300/15 px-2.5 py-0.5 text-teal-100">{% if p.costo == 0 %}Gratis{% else %}De pago{% endif %}</span>
+                                    <span class="text-white/50">{% if p.horario %}{{ p.horario }}{% else %}Horario no informado{% endif %}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form method="post" action="{% url 'quitar_panorama' p.pk %}" class="mt-3">
+                            {% csrf_token %}
+                            <button type="submit" class="rounded-full border border-rose-300/30 px-4 py-1.5 text-xs text-rose-300 transition hover:bg-rose-300/10">Quitar</button>
+                        </form>
+                    </article>
+                {% empty %}
+                    <p class="py-10 text-center text-white/50">Aún no has guardado ningún panorama.</p>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
 </body>
 </html>

@@ -1,0 +1,10 @@
+{% if user.is_authenticated %}
+    <span class="text-sm text-white/70">Hola, {{ user.username }}</span>
+    <form method="post" action="{% url 'logout' %}" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm text-white transition hover:bg-white/10">Salir</button>
+    </form>
+{% else %}
+    <a href="{% url 'login' %}" class="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm text-white transition hover:bg-white/10">Entrar</a>
+    <a href="{% url 'registro' %}" class="rounded-full bg-teal-300 px-4 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Registrarse</a>
+{% endif %}

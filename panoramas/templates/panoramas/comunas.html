@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Panoramas en Santiago</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-[#2f4247] via-[#1a2427] to-[#0a0e0f] text-white antialiased">
+
+    <!-- Manchas de color: dan algo que desenfocar detrás del vidrio -->
+    <div class="pointer-events-none fixed -left-24 -top-24 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl"></div>
+    <div class="pointer-events-none fixed -bottom-32 -right-24 h-96 w-96 rounded-full bg-emerald-300/10 blur-3xl"></div>
+
+    <div class="relative mx-auto max-w-2xl px-4 pb-16">
+
+        <header class="flex flex-wrap items-center justify-between gap-3 py-5">
+            <a href="{% url 'elegir_comuna' %}" class="text-lg font-semibold tracking-tight">Panoramas en Santiago</a>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{% url 'sorpresa' %}" class="rounded-full bg-teal-300 px-4 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">🎲 Sorpréndeme</a>
+                <a href="{% url 'mis_guardados' %}" class="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm transition hover:bg-white/10">Mis guardados</a>
+                {% include 'panoramas/cuentas_tw.html' %}
+            </div>
+        </header>
+
+        <main class="mt-6">
+            <h1 class="text-4xl font-bold leading-tight tracking-tight">¿A qué comuna<br>quieres ir?</h1>
+            <p class="mt-2 text-sm text-white/60">Elige una comuna y después te mostramos qué hacer ahí.</p>
+
+            <input id="buscar" type="search" placeholder="Buscar comuna..."
+                   class="mt-6 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-white placeholder-white/40 backdrop-blur-md outline-none transition focus:border-teal-300/60">
+
+            <div class="mt-5 flex flex-col gap-3">
+                {% for c in comunas %}
+                    <a data-nombre="{{ c.comuna|lower }}"
+                       href="{% url 'elegir_categoria' %}?comuna={{ c.comuna|urlencode }}"
+                       class="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 shadow-lg shadow-black/20 backdrop-blur-md transition hover:border-teal-300/40 hover:bg-white/10">
+                        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-teal-300/15 text-lg">📍</span>
+                        <span class="flex-1">
+                            <span class="block font-semibold">{{ c.comuna }}</span>
+                            <span class="block text-xs text-white/50">{{ c.total }} lugares</span>
+                        </span>
+                        <span class="text-xl text-white/40">›</span>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <p class="mt-8 text-center">
+                <a href="{% url 'lista_panoramas' %}" class="rounded-full border border-teal-300/40 px-5 py-2 text-sm text-teal-200 transition hover:bg-teal-300/10">Ver todo el mapa</a>
+            </p>
+        </main>
+    </div>
+
+    <script>
+        const caja = document.getElementById('buscar');
+        caja.addEventListener('input', function () {
+            const q = caja.value.toLowerCase().trim();
+            document.querySelectorAll('[data-nombre]').forEach(function (el) {
+                el.classList.toggle('hidden', !el.dataset.nombre.includes(q));
+            });
+        });
+    </script>
+</body>
+</html>

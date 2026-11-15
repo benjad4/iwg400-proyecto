@@ -103,9 +103,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
@@ -127,3 +127,7 @@ MAILERS = {
     },
 }
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'elegir_comuna'
+LOGOUT_REDIRECT_URL = 'elegir_comuna'

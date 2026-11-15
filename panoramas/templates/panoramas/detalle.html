@@ -1,70 +1,155 @@
 {% load static %}
+{% load l10n %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ panorama.nombre }}</title>
-    <link rel="stylesheet" href="{% static 'panoramas/estilos.css' %}">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 </head>
-<body>
-    <header class="encabezado">
-        <h1>Panoramas en Santiago</h1>
-        <a href="{% url 'lista_panoramas' %}">← Volver a la lista</a>
-    </header>
+<body class="min-h-screen bg-gradient-to-br from-[#3d5258] via-[#27363b] to-[#141c1f] text-white antialiased">
 
-    <main class="contenedor">
-        <section class="ficha">
-            <h1>{{ panorama.nombre }}</h1>
-            <p>{{ panorama.descripcion }}</p>
+    <div class="pointer-events-none fixed -left-24 -top-24 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl"></div>
+    <div class="pointer-events-none fixed -bottom-32 -right-24 h-96 w-96 rounded-full bg-emerald-300/10 blur-3xl"></div>
 
-            {% if esta_guardado %}
-                <p class="guardado">✔ Guardado · <a href="{% url 'mis_guardados' %}">Ver mis guardados</a></p>
-            {% else %}
-                <form method="post" action="{% url 'guardar_panorama' panorama.pk %}">
-                    {% csrf_token %}
-                    <button type="submit" class="boton">Guardar resumen</button>
-                </form>
-            {% endif %}
+    <div class="relative mx-auto max-w-2xl px-4 pb-16">
 
-            <ul class="datos">
-                <li>Categoría: {{ panorama.categoria }}</li>
-                <li>Dirección: {{ panorama.direccion }}, {{ panorama.comuna }}</li>
-                <li>Costo: {% if panorama.costo == 0 %}Gratis{% else %}${{ panorama.costo }}{% endif %}</li>
-                <li>Horario: {% if panorama.horario %}{{ panorama.horario }}{% else %}No informado{% endif %}</li>
-                <li>Capacidad: {% if panorama.capacidad_maxima %}hasta {{ panorama.capacidad_maxima }} personas{% else %}sin límite informado{% endif %}</li>
-                <li>Pago: {% if panorama.acepta_efectivo %}Efectivo {% endif %}{% if panorama.acepta_tarjeta %}Tarjeta {% endif %}{% if panorama.acepta_transferencia %}Transferencia{% endif %}</li>
-                <li>Accesible: {% if panorama.accesible %}Sí{% else %}No{% endif %} · Mascotas: {% if panorama.acepta_mascotas %}Sí{% else %}No{% endif %} · Niños: {% if panorama.apto_ninos %}Sí{% else %}No{% endif %}</li>
-                {% if panorama.acepta_junaeb %}
-                    <li>Acepta JUNAEB · Cocina: {{ panorama.tipo_cocina }}</li>
-                {% endif %}
-            </ul>
-        </section>
+        <header class="flex flex-wrap items-center justify-between gap-3 py-5">
+            <a href="{% url 'lista_panoramas' %}?comuna={{ panorama.comuna|urlencode }}&categoria={{ panorama.categoria|urlencode }}" class="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm transition hover:bg-white/10">← Volver al mapa</a>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{% url 'sorpresa' %}" class="rounded-full bg-teal-300 px-4 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">🎲 Sorpréndeme</a>
+                <a href="{% url 'mis_guardados' %}" class="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm transition hover:bg-white/10">Mis guardados</a>
+                {% include 'panoramas/cuentas_tw.html' %}
+            </div>
+        </header>
 
-        <section class="ficha">
-            <h2>Reseñas</h2>
-            {% if promedio %}
-                <p class="nota">★ {{ promedio|floatformat:1 }} / 5 ({{ resenas.count }} reseñas)</p>
-            {% endif %}
+        <main class="mt-2 flex flex-col gap-4">
 
-            {% for r in resenas %}
-                <div class="resena">
-                    <strong>{{ r.autor }}</strong> · <span class="nota">{{ r.valoracion }}/5</span> · {{ r.fecha|date:"d/m/Y" }}
-                    <p>{{ r.comentario }}</p>
+            <!-- Encabezado de la ficha -->
+            <section class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20 backdrop-blur-md">
+                <div class="flex items-start gap-4">
+                    <span class="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-teal-300/15 text-4xl">{% if panorama.categoria == "Aire libre" %}🌳{% elif panorama.categoria == "Cultura" %}🏛️{% elif panorama.categoria == "Comida" %}🍽️{% elif panorama.categoria == "Entretención" %}🎭{% elif panorama.categoria == "Deporte" %}⚽{% elif panorama.categoria == "Turismo" %}🧭{% elif panorama.categoria == "Compras y ferias" %}🛍️{% elif panorama.categoria == "Mundo nocturno" %}🌙{% elif panorama.categoria == "Recreativo" %}🎮{% elif panorama.categoria == "Cerros y trekking" %}⛰️{% else %}📍{% endif %}</span>
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-2xl font-bold leading-tight tracking-tight">{{ panorama.nombre }}</h1>
+                        <p class="mt-1 text-sm text-white/60">{{ panorama.comuna }} · {{ panorama.categoria }}</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="rounded-full bg-teal-300/15 px-3 py-1 text-xs text-teal-100">{% if panorama.costo == 0 %}Gratis{% else %}De pago{% endif %}</span>
+                            {% if panorama.acepta_junaeb %}<span class="rounded-full bg-amber-300/15 px-3 py-1 text-xs text-amber-200">JUNAEB{% if panorama.tipo_cocina %} · {{ panorama.tipo_cocina }}{% endif %}</span>{% endif %}
+                            {% if panorama.accesible %}<span class="rounded-full bg-teal-300/15 px-3 py-1 text-xs text-teal-100">♿ Accesible</span>{% endif %}
+                        </div>
+                    </div>
                 </div>
-            {% empty %}
-                <p class="vacio">Aún no hay reseñas. ¡Sé el primero!</p>
-            {% endfor %}
-        </section>
 
-        <section class="ficha">
-            <h3>Deja tu reseña</h3>
-            <form method="post" class="formulario">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="boton">Publicar</button>
-            </form>
-        </section>
-    </main>
+                {% if panorama.descripcion %}
+                    <p class="mt-4 text-sm leading-relaxed text-white/70">{{ panorama.descripcion }}</p>
+                {% endif %}
+
+                <div class="mt-5">
+                    {% if user.is_authenticated %}
+                        {% if esta_guardado %}
+                            <p class="rounded-full border border-teal-300/40 bg-teal-300/10 px-5 py-2 text-center text-sm text-teal-100">✔ Guardado · <a href="{% url 'mis_guardados' %}" class="underline underline-offset-4">Ver mis guardados</a></p>
+                        {% else %}
+                            <form method="post" action="{% url 'guardar_panorama' panorama.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full rounded-full bg-teal-300 px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Guardar resumen</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="block rounded-full border border-teal-300/40 bg-teal-300/10 px-5 py-2.5 text-center text-sm font-semibold text-teal-100 transition hover:bg-teal-300/20">🔒 Inicia sesión para guardar</a>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Información -->
+            <section class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20 backdrop-blur-md">
+                <h2 class="text-lg font-semibold">Información</h2>
+
+                <dl class="mt-4 divide-y divide-white/10 text-sm">
+                    <div class="flex justify-between gap-4 py-3">
+                        <dt class="text-white/50">Dirección</dt>
+                        <dd class="text-right">{% if panorama.direccion == "Dirección por completar" %}{{ panorama.comuna }}{% else %}{{ panorama.direccion }}, {{ panorama.comuna }}{% endif %}</dd>
+                    </div>
+                    <div class="flex justify-between gap-4 py-3">
+                        <dt class="text-white/50">Horario</dt>
+                        <dd class="text-right">{% if panorama.horario %}{{ panorama.horario }}{% else %}No informado{% endif %}</dd>
+                    </div>
+                    <div class="flex justify-between gap-4 py-3">
+                        <dt class="text-white/50">Capacidad</dt>
+                        <dd class="text-right">{% if panorama.capacidad_maxima %}Hasta {{ panorama.capacidad_maxima }} personas{% else %}Sin límite informado{% endif %}</dd>
+                    </div>
+                </dl>
+
+                <div class="mt-3 flex flex-col gap-2">
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ panorama.nombre|urlencode }}+{{ panorama.comuna|urlencode }}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-3 text-sm transition hover:border-teal-300/40">
+                        <span>📍 Ver ubicación en Google Maps</span><span class="text-teal-200">↗</span>
+                    </a>
+
+                    {% if panorama.sitio_web %}
+                        <a href="{{ panorama.sitio_web }}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-3 text-sm transition hover:border-teal-300/40">
+                            <span>{% if panorama.costo != 0 %}Ver precios y más información en su sitio web{% else %}Más información en su sitio web{% endif %}</span><span class="text-teal-200">↗</span>
+                        </a>
+                    {% else %}
+                        <a href="https://www.google.com/search?q={{ panorama.nombre|urlencode }}+{{ panorama.comuna|urlencode }}{% if panorama.costo != 0 %}+precio+entrada{% endif %}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-3 text-sm transition hover:border-teal-300/40">
+                            <span>{% if panorama.costo != 0 %}Buscar precios y más información en Google{% else %}Buscar más información en Google{% endif %}</span><span class="text-teal-200">↗</span>
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-2 text-xs">
+                    <span class="rounded-full px-3 py-1 {% if panorama.accesible %}bg-teal-300/15 text-teal-100{% else %}bg-white/5 text-white/40{% endif %}">{% if panorama.accesible %}✓{% else %}✕{% endif %} Accesible</span>
+                    <span class="rounded-full px-3 py-1 {% if panorama.acepta_mascotas %}bg-teal-300/15 text-teal-100{% else %}bg-white/5 text-white/40{% endif %}">{% if panorama.acepta_mascotas %}✓{% else %}✕{% endif %} Mascotas</span>
+                    <span class="rounded-full px-3 py-1 {% if panorama.apto_ninos %}bg-teal-300/15 text-teal-100{% else %}bg-white/5 text-white/40{% endif %}">{% if panorama.apto_ninos %}✓{% else %}✕{% endif %} Niños</span>
+                </div>
+            </section>
+
+            <!-- Reseñas -->
+            <section class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20 backdrop-blur-md">
+                <div class="flex items-baseline justify-between">
+                    <h2 class="text-lg font-semibold">Reseñas</h2>
+                    {% if promedio %}
+                        <p class="text-amber-300"><span class="text-2xl font-bold">{{ promedio|floatformat:1 }}</span><span class="text-sm text-white/50"> / 5 · {{ resenas.count }} reseñas</span></p>
+                    {% endif %}
+                </div>
+
+                <div class="mt-4 flex flex-col gap-3">
+                    {% for r in resenas %}
+                        <div class="rounded-2xl border border-white/10 bg-slate-900/30 p-4">
+                            <div class="flex items-center gap-3">
+                                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-teal-300/20 text-sm font-semibold text-teal-100">{{ r.autor|first|upper }}</span>
+                                <div class="min-w-0 flex-1">
+                                    <p class="truncate text-sm font-semibold">{{ r.autor }}</p>
+                                    <p class="text-xs text-white/40">{{ r.fecha|date:"d/m/Y" }}</p>
+                                </div>
+                                <p class="text-sm tracking-wider">{% for i in "12345" %}<span class="{% if forloop.counter <= r.valoracion %}text-amber-300{% else %}text-white/20{% endif %}">★</span>{% endfor %}</p>
+                            </div>
+                            {% if r.comentario %}<p class="mt-3 text-sm leading-relaxed text-white/70">{{ r.comentario }}</p>{% endif %}
+                        </div>
+                    {% empty %}
+                        <p class="py-4 text-center text-sm text-white/50">Aún no hay reseñas. ¡Sé el primero!</p>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Formulario de reseña -->
+            <section class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20 backdrop-blur-md">
+                <h2 class="text-lg font-semibold">Deja tu reseña</h2>
+                {% if user.is_authenticated %}
+                    <p class="mt-1 text-xs text-white/50">Publicarás como <span class="text-teal-200">{{ user.username }}</span>.</p>
+                    <form method="post" class="mt-4 [&_p]:mb-4 [&_label]:block [&_label]:text-xs [&_label]:text-white/60 [&_input]:mt-1 [&_input]:w-full [&_input]:rounded-xl [&_input]:border [&_input]:border-white/10 [&_input]:bg-slate-900/60 [&_input]:px-3 [&_input]:py-2 [&_input]:text-sm [&_input]:text-white [&_input]:outline-none [&_select]:mt-1 [&_select]:w-full [&_select]:rounded-xl [&_select]:border [&_select]:border-white/10 [&_select]:bg-slate-900/60 [&_select]:px-3 [&_select]:py-2 [&_select]:text-sm [&_select]:text-white [&_textarea]:mt-1 [&_textarea]:w-full [&_textarea]:rounded-xl [&_textarea]:border [&_textarea]:border-white/10 [&_textarea]:bg-slate-900/60 [&_textarea]:px-3 [&_textarea]:py-2 [&_textarea]:text-sm [&_textarea]:text-white [&_textarea]:outline-none [&_.errorlist]:mb-1 [&_.errorlist]:list-none [&_.errorlist]:p-0 [&_.errorlist]:text-sm [&_.errorlist]:text-rose-300">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="rounded-full bg-teal-300 px-6 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Publicar</button>
+                    </form>
+                {% else %}
+                    <p class="mt-3 text-sm text-white/60">Para dejar una reseña necesitas una cuenta.</p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="rounded-full bg-teal-300 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:bg-teal-200">Entrar</a>
+                        <a href="{% url 'registro' %}" class="rounded-full border border-white/15 bg-white/5 px-5 py-2 text-sm transition hover:bg-white/10">Crear cuenta</a>
+                    </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
 </body>
 </html>

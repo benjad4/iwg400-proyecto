@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -11,6 +12,7 @@ class Panorama(models.Model):
     longitud = models.FloatField()
     costo = models.PositiveIntegerField(default=0)
     horario = models.CharField(max_length=100, blank=True)
+    sitio_web = models.URLField(max_length=300, blank=True)
     acepta_junaeb = models.BooleanField(default=False)
     tipo_cocina = models.CharField(max_length=60, blank=True)
 
@@ -35,6 +37,10 @@ class Resena(models.Model):
     panorama = models.ForeignKey(
         Panorama, on_delete=models.CASCADE, related_name='resenas'
     )
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='resenas'
+    )
     autor = models.CharField(max_length=60)
     valoracion = models.PositiveSmallIntegerField(
         choices=[(i, str(i)) for i in range(1, 6)]
@@ -47,3 +53,20 @@ class Resena(models.Model):
 
     def __str__(self):
         return f'{self.autor} - {self.panorama.nombre}'
+
+
+class Guardado(models.Model):
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='guardados'
+    )
+    panorama = models.ForeignKey(
+        Panorama, on_delete=models.CASCADE, related_name='guardado_por'
+    )
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'panorama')
+        ordering = ['-fecha']
+
+    def __str__(self):
+        return f'{self.usuario} - {self.panorama.nombre}'

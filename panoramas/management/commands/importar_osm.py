@@ -16,8 +16,15 @@ LON_MIN, LON_MAX = -70.85, -70.45
 
 CATEGORIAS = {
     "Aire libre": '["leisure"="park"]',
-    "Cultura": '["tourism"~"^(museum|gallery)$"]',
-    "Comida": '["amenity"~"^(restaurant|cafe)$"]',
+    "Cultura": '[~"^(tourism|amenity)$"~"^(museum|gallery|library)$"]',
+    "Comida": '["amenity"~"^(restaurant|cafe|fast_food)$"]',
+    "Entretención": '["amenity"~"^(cinema|theatre|arts_centre)$"]',
+    "Deporte": '["leisure"~"^(sports_centre|swimming_pool|fitness_centre|skatepark)$"]',
+    "Turismo": '["tourism"~"^(viewpoint|attraction|zoo)$"]',
+    "Compras y ferias": '["amenity"="marketplace"]',
+    "Mundo nocturno": '["amenity"~"^(nightclub|pub|bar|biergarten)$"]',
+    "Recreativo": '[~"^(leisure|amenity|sport)$"~"^(bowling_alley|miniature_golf|escape_game|amusement_arcade|billiards)$"]',
+    "Cerros y trekking": '["natural"="peak"]',
 }
 
 
@@ -50,11 +57,13 @@ class Command(BaseCommand):
         parser.add_argument("--comunas", nargs="+",
                             default=["Santiago", "Providencia", "Ñuñoa"])
         parser.add_argument("--limite", type=int, default=10)
+        parser.add_argument("--categorias", nargs="+", default=list(CATEGORIAS.keys()))
 
     def handle(self, *args, **opciones):
         creados = 0
         for comuna in opciones["comunas"]:
-            for categoria, filtro in CATEGORIAS.items():
+            for categoria in opciones["categorias"]:
+                filtro = CATEGORIAS[categoria]
                 self.stdout.write(f"{comuna} - {categoria}...")
                 for elemento in consultar(comuna, filtro, opciones["limite"]):
                     if self.guardar(elemento, comuna, categoria):
@@ -76,12 +85,20 @@ class Command(BaseCommand):
         numero = tags.get("addr:housenumber", "")
         direccion = f"{calle} {numero}".strip() or "Dirección por completar"
 
-        gratis = categoria == "Aire libre" or tags.get("fee") == "no"
+        gratis = (
+            categoria in ("Aire libre", "Turismo", "Cerros y trekking")
+            or tags.get("fee") == "no"
+            or tags.get("amenity") == "library"
+        )
         cocina = ""
         if categoria == "Comida":
             cocina = tags.get("cuisine", "").split(";")[0].replace("_", " ").capitalize()
 
-        _, creado = Panorama.objects.get_or_create(
+        sitio = (tags.get("website") or tags.get("contact:website") or "").strip()
+        if sitio and not sitio.startswith("http"):
+            sitio = "https://" + sitio
+
+        panorama, creado = Panorama.objects.get_or_create(
             nombre=nombre,
             comuna=comuna,
             defaults={
@@ -92,8 +109,12 @@ class Command(BaseCommand):
                 "costo": 0 if gratis else 5000,
                 "descripcion": "" if gratis else "[Por completar] Costo, horario y JUNAEB sin verificar.",
                 "horario": tags.get("opening_hours", "")[:100],
+                "sitio_web": sitio[:300],
                 "tipo_cocina": cocina[:60],
                 "accesible": tags.get("wheelchair") == "yes",
             },
         )
+        if not creado and sitio and not panorama.sitio_web:
+            panorama.sitio_web = sitio[:300]
+            panorama.save(update_fields=["sitio_web"])
         return creado
